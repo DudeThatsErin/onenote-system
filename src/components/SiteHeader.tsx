@@ -8,6 +8,7 @@ export default function SiteHeader() {
       <Link href="/setup">Set up</Link>
       <Link href="/shortcuts">Shortcuts</Link>
       <Link href="/docs">Docs</Link>
+      <a href="mailto:me@erinskidds.com">Email support</a>
       <a href="https://github.com/DudeThatsErin/onenote-queue" target="_blank" rel="noreferrer">GitHub ↗</a>
     </nav>
   </header>;
