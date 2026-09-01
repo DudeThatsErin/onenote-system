@@ -11,9 +11,10 @@ The public guide is available at [onenotequeue.erinskidds.com](https://onenotequ
 - Notebook and section picker
 - Hashed per-user capture API keys
 - `POST /api/capture` for a title, plain-text body, and optional source URL
+- `POST /api/append` for adding plain text and an optional source URL to an existing page
 - Vercel deployment and Docker Compose self-hosting
 
-Append-to-page and Discord interactions are planned but are not operational in the current release. The documentation labels them accordingly.
+Discord interactions are not operational in the current release. The documentation labels that integration accordingly.
 
 ## Beginner deployment
 
@@ -65,6 +66,22 @@ Content-Type: application/json
 ```
 
 A successful request returns `201 Created` with the created page ID, title, and OneNote web URL.
+
+## Append API
+
+```http
+POST /api/append
+Authorization: Bearer oq_YOUR_PRIVATE_KEY
+Content-Type: application/json
+
+{
+  "pageTitle": "Quick Inbox",
+  "content": "Text to add",
+  "url": "https://example.com"
+}
+```
+
+Use either `pageTitle` to find an exact title in the configured default section or `pageId` to identify a page directly. A successful request returns `200 OK` after Microsoft Graph appends the content.
 
 ## Privacy and security
 

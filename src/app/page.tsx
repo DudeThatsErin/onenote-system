@@ -42,7 +42,7 @@ export default function Home() {
     <section className="block">
       <p className="eyebrow">Use it from anywhere</p>
       <h2>What you can send</h2>
-      <p className="lede">The first release focuses on a small, reliable capture format: title, plain text, and an optional source link.</p>
+      <p className="lede">Use a small, reliable note format: title, plain text, and an optional source link. Create a new page or append to one that already exists.</p>
       <div className="grid three">
         <article><h3>Share Sheet captures</h3><p>Send selected text, a link, or content from another app through the iPhone, iPad, or Mac Share Sheet.</p></article>
         <article><h3>Quick inbox notes</h3><p>Run a Shortcut, type a thought, and drop it into the same OneNote inbox without opening OneNote first.</p></article>
@@ -94,7 +94,7 @@ export default function Home() {
       <div className="grid two">
         <article><h3>Do I need to leave a computer running?</h3><p>No when you use Vercel. Yes when you self-host on a computer in your home.</p></article>
         <article><h3>Do I give this site my Microsoft password?</h3><p>No. You sign in on Microsoft&apos;s page. OneNote Queue receives revocable access tokens, never your password.</p></article>
-        <article><h3>Does it modify existing pages?</h3><p>Not in the current release. The capture endpoint creates new pages. Append-to-page support is listed as planned, not available.</p></article>
+        <article><h3>Does it modify existing pages?</h3><p>Yes. The capture endpoint creates new pages, and the append endpoint adds plain text and an optional source link to an existing page.</p></article>
         <article><h3>Is Discord ready?</h3><p>The core database, Microsoft connection, section picker, API keys, and capture endpoint are available. The Discord interaction adapter is still under development.</p></article>
       </div>
     </section>

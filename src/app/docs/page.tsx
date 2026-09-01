@@ -25,6 +25,15 @@ const CURL = `curl -X POST "https://YOUR-DOMAIN/api/capture" \\
     "url": "https://example.com/source"
   }'`;
 
+const APPEND_CURL = `curl -X POST "https://YOUR-DOMAIN/api/append" \\
+  -H "Authorization: Bearer oq_YOUR_PRIVATE_KEY" \\
+  -H "Content-Type: application/json" \\
+  --data '{
+    "pageTitle": "Quick Inbox",
+    "content": "This text is added to the existing page.",
+    "url": "https://example.com/source"
+  }'`;
+
 const SELF_HOST = `git clone https://github.com/DudeThatsErin/onenote-queue.git
 cd onenote-queue
 cp .env.example .env
@@ -37,7 +46,7 @@ export default function DocsPage() {
     <section className="doc-hero">
       <p className="eyebrow">Documentation</p>
       <h1>Build and understand your OneNote Queue</h1>
-      <p className="lead">Start with the beginner deployment path, then use this page as the reference for Microsoft permissions, settings, the capture API, privacy, updates, and common errors.</p>
+      <p className="lead">Start with the beginner deployment path, then use this page as the reference for Microsoft permissions, settings, the OneNote APIs, privacy, updates, and common errors.</p>
     </section>
 
     <nav className="toc" aria-label="Documentation sections">
@@ -48,7 +57,7 @@ export default function DocsPage() {
       <a href="#microsoft">Microsoft app</a>
       <a href="#connect">Connect OneNote</a>
       <a href="#shortcuts">Shortcuts</a>
-      <a href="#api">Capture API</a>
+      <a href="#api">OneNote APIs</a>
       <a href="#security">Security</a>
       <a href="#self-hosting">Self-hosting</a>
       <a href="#updates">Updates</a>
@@ -146,11 +155,13 @@ export default function DocsPage() {
       </section>
 
       <section id="api">
-        <h2>Capture API reference</h2>
-        <p>The current release has one public capture operation. It creates a new page in the signed-in user&apos;s default OneNote section.</p>
+        <h2>OneNote API reference</h2>
+        <p>The API can create a page in the signed-in user&apos;s default section or append plain text to an existing page.</p>
         <div className="table-wrap"><table><thead><tr><th>Method</th><th>Path</th><th>Authentication</th><th>Success</th></tr></thead><tbody>
           <tr><td><code>POST</code></td><td><code>/api/capture</code></td><td><code>Authorization: Bearer oq_…</code></td><td><code>201 Created</code></td></tr>
+          <tr><td><code>POST</code></td><td><code>/api/append</code></td><td><code>Authorization: Bearer oq_…</code></td><td><code>200 OK</code></td></tr>
         </tbody></table></div>
+        <h3>Create a page: <code>POST /api/capture</code></h3>
         <div className="table-wrap"><table><thead><tr><th>JSON field</th><th>Required?</th><th>Limit and behavior</th></tr></thead><tbody>
           <tr><td><code>title</code></td><td>No</td><td>Plain text, trimmed to 200 characters. Defaults to “Untitled capture.”</td></tr>
           <tr><td><code>content</code></td><td>No</td><td>Plain text, up to 100,000 characters. New lines become line breaks.</td></tr>
@@ -167,7 +178,25 @@ export default function DocsPage() {
     "webUrl": "https://…"
   }
 }`}</code></pre>
-        <p>Error responses use <code>{'{ "error": "Explanation" }'}</code>. A <code>401</code> usually means a missing/incorrect key; <code>409</code> means no default section has been chosen; <code>500</code> means the database or Microsoft request failed.</p>
+        <h3>Append to a page: <code>POST /api/append</code></h3>
+        <div className="table-wrap"><table><thead><tr><th>JSON field</th><th>Required?</th><th>Limit and behavior</th></tr></thead><tbody>
+          <tr><td><code>pageTitle</code></td><td>One target required</td><td>Exact title of a page in the default section, up to 200 characters. Duplicate titles return <code>409</code>.</td></tr>
+          <tr><td><code>pageId</code></td><td>One target required</td><td>Microsoft Graph page ID. Use this instead of <code>pageTitle</code> to identify a page exactly or target another section.</td></tr>
+          <tr><td><code>content</code></td><td>Yes</td><td>Non-empty plain text, up to 100,000 characters. New lines become line breaks.</td></tr>
+          <tr><td><code>url</code></td><td>No</td><td>Appended as a source link only when it begins with <code>http://</code> or <code>https://</code>.</td></tr>
+        </tbody></table></div>
+        <h3>Example append request</h3>
+        <pre><code>{APPEND_CURL}</code></pre>
+        <h3>Example append response</h3>
+        <pre><code>{`{
+  "ok": true,
+  "page": {
+    "id": "…",
+    "title": "Quick Inbox",
+    "webUrl": "https://…"
+  }
+}`}</code></pre>
+        <p>Error responses use <code>{'{ "error": "Explanation" }'}</code>. A <code>400</code> means the JSON or fields are invalid; <code>401</code> means the API key is missing/incorrect; <code>404</code> means the requested page title was not found; <code>409</code> means a default section is missing or a title is ambiguous; <code>500</code> means the database or Microsoft request failed.</p>
       </section>
 
       <section id="security">

@@ -12,6 +12,16 @@ Content-Type: application/json
   "url": "https://optional-source.example"
 }`;
 
+const APPEND_REQUEST = `POST https://YOUR-ONENOTE-QUEUE-DOMAIN/api/append
+Authorization: Bearer oq_YOUR_PRIVATE_KEY
+Content-Type: application/json
+
+{
+  "pageTitle": "Quick Inbox",
+  "content": "The text to add",
+  "url": "https://optional-source.example"
+}`;
+
 export default function ShortcutsPage() {
   return <main>
     <SiteHeader />
@@ -32,14 +42,14 @@ export default function ShortcutsPage() {
     <article className="documentation">
       <section id="downloads">
         <h2>Choose the Shortcut you want</h2>
-        <p>These are the four Shortcut links planned for the project. The iCloud download URLs have not been supplied yet, so this page does not pretend that unavailable downloads work. The manual instructions below let you build the Quick Inbox version now.</p>
+        <p>These are the four Shortcut designs for the project. The iCloud download URLs have not been supplied yet, but the manual instructions below let you build both Quick Inbox and Append to OneNote now.</p>
         <div className="grid two shortcut-grid">
           <article><p className="availability">iCloud link needed</p><h3>Capture to OneNote</h3><p>Ask for a page title and note text, then create a new page in your default section.</p><span className="button disabled" aria-disabled="true">Download not published</span></article>
           <article><p className="availability">iCloud link needed</p><h3>Share Sheet to OneNote</h3><p>Receive text or a URL from another app&apos;s Share button and create a sourced OneNote page.</p><span className="button disabled" aria-disabled="true">Download not published</span></article>
           <article><p className="availability">iCloud link needed</p><h3>Quick Inbox</h3><p>Type a fast thought from the Home Screen, Action Button, widget, menu bar, or Siri.</p><span className="button disabled" aria-disabled="true">Download not published</span></article>
-          <article><p className="availability planned">Planned API feature</p><h3>Append to OneNote</h3><p>Add text to an existing page. The current API creates pages only, so this Shortcut will be published after append support exists.</p><span className="button disabled" aria-disabled="true">Not available yet</span></article>
+          <article><p className="availability">iCloud link needed</p><h3>Append to OneNote</h3><p>Add text and an optional source link to an existing page in your default section.</p><span className="button disabled" aria-disabled="true">Download not published</span></article>
         </div>
-        <div className="callout"><p><strong>Links still needed from Erin:</strong> Capture to OneNote, Share Sheet to OneNote, and Quick Inbox. Append should wait until the backend can append safely.</p></div>
+        <div className="callout"><p><strong>iCloud links still needed from Erin:</strong> Capture to OneNote, Share Sheet to OneNote, Quick Inbox, and Append to OneNote. Both API operations are live and can be built manually without a download.</p></div>
       </section>
 
       <section id="before">
@@ -80,6 +90,21 @@ export default function ShortcutsPage() {
         <h3>What the Shortcut sends</h3>
         <pre><code>{REQUEST}</code></pre>
         <p>The <code>title</code> field is optional and defaults to “Untitled capture.” The <code>content</code> field accepts plain text. The optional <code>url</code> field must start with <code>http://</code> or <code>https://</code>.</p>
+
+        <h3 id="build-append">Build the Append to OneNote Shortcut</h3>
+        <p>This version adds text to a page that already exists in the default section selected during setup.</p>
+        <ol className="steps compact-steps">
+          <li><h3>Create a blank Shortcut</h3><p>Open <strong>Shortcuts</strong>, press <strong>+</strong>, choose <strong>New Shortcut</strong>, and name it <code>Append to OneNote</code>.</p></li>
+          <li><h3>Ask which page to update</h3><p>Add <strong>Ask for Input</strong> with the prompt <code>Exact OneNote page title</code>. The title is matched in your default section.</p></li>
+          <li><h3>Ask what to append</h3><p>Add another <strong>Ask for Input</strong> with the prompt <code>What do you want to add?</code>.</p></li>
+          <li><h3>Add the append API address</h3><p>Add a <strong>URL</strong> action using your deployment address followed by <code>/api/append</code>.</p></li>
+          <li><h3>Send the authenticated request</h3><p>Add <strong>Get Contents of URL</strong>, set the method to <strong>POST</strong>, and add an <code>Authorization</code> header whose value is <code>Bearer YOUR_API_KEY</code>.</p></li>
+          <li><h3>Add the JSON fields</h3><p>Set the request body to <strong>JSON</strong>. Add <code>pageTitle</code> using the first input and <code>content</code> using the second input. If duplicate titles exist, use the page&apos;s Microsoft Graph ID in a <code>pageId</code> field instead.</p></li>
+          <li><h3>Test the append</h3><p>Add <strong>Show Result</strong>, run the Shortcut, and confirm that it returns <code>&quot;ok&quot;: true</code>. The text should appear at the end of the existing page.</p></li>
+        </ol>
+        <h3>What the Append Shortcut sends</h3>
+        <pre><code>{APPEND_REQUEST}</code></pre>
+        <p><code>content</code> is required and accepts up to 100,000 plain-text characters. Supply either <code>pageTitle</code> or <code>pageId</code>. Title lookup is limited to your selected default section; a page ID can identify a page in any section available to the connected Microsoft account.</p>
       </section>
 
       <section id="troubleshooting">
