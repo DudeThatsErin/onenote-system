@@ -1,0 +1,17 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports: ["3000:3000"]
+    env_file: .env
+    depends_on: [postgres]
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: onenote_queue
+      POSTGRES_USER: onenote_queue
+      POSTGRES_PASSWORD: change-me-before-running
+    volumes: [postgres_data:/var/lib/postgresql/data]
+volumes:
+  postgres_data:

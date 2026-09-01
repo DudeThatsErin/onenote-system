@@ -1,0 +1,6 @@
+import Link from 'next/link';
+import SetupWizard from '@/components/SetupWizard';
+
+export default function Home() {
+  return <main><header><Link href="/" className="brand">OneNote Queue</Link><nav><Link href="/docs">Docs</Link><Link href="/setup">Setup</Link></nav></header><section className="hero"><p className="eyebrow">Open-source · self-hostable · Vercel-ready</p><h1>Your private inbox for OneNote.</h1><p className="lead">Connect Microsoft, choose a OneNote section, then capture from Shortcuts, Discord, or any app that can send HTTPS.</p><div className="actions"><Link className="button" href="/setup">Start setup</Link><Link className="button secondary" href="/docs">Read the docs</Link></div></section><section className="grid"><article><h2>Own your connection</h2><p>You create your own Microsoft Entra app. Your credentials and refresh tokens are encrypted in your own database.</p></article><article><h2>One endpoint</h2><p>Use a scoped API key with a simple capture endpoint for iOS Shortcuts, webhooks, and optional Discord commands.</p></article><article><h2>Deploy anywhere</h2><p>Use Vercel with Neon Postgres, or Docker Compose and Postgres on your own server.</p></article></section><SetupWizard compact /></main>;
+}

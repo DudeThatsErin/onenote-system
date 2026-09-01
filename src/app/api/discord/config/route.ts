@@ -1,0 +1,6 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { currentUser } from '@/lib/auth';
+import { db } from '@/lib/db';
+import { encrypt } from '@/lib/crypto';
+export const runtime = 'nodejs';
+export async function POST(req: NextRequest) { try { const user = await currentUser(); if (!user) return NextResponse.json({ error: 'Connect Microsoft before configuring Discord.' }, { status: 401 }); const { applicationId, publicKey, botToken, testGuildId } = await req.json(); if (![applicationId, publicKey].every((x) => typeof x === 'string' && x.trim())) return NextResponse.json({ error: 'Application ID and Public Key are required.' }, { status: 400 }); await db()`INSERT INTO oq_discord_config (id, application_id, public_key, bot_token_enc, test_guild_id, updated_at) VALUES (1, ${applicationId.trim()}, ${publicKey.trim()}, ${botToken ? encrypt(botToken.trim()) : null}, ${testGuildId?.trim() || null}, now()) ON CONFLICT (id) DO UPDATE SET application_id=excluded.application_id, public_key=excluded.public_key, bot_token_enc=excluded.bot_token_enc, test_guild_id=excluded.test_guild_id, updated_at=now()`; return NextResponse.json({ ok: true }); } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : 'Could not save Discord configuration.' }, { status: 500 }); } }
