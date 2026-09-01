@@ -18,7 +18,9 @@ export async function currentUser() {
   const value = (await cookies()).get(COOKIE)?.value;
   if (!value) return null;
   const [userId, signature] = value.split('.');
-  if (!userId || !signature || !crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(sign(userId)))) return null;
+  if (!userId || !signature) return null;
+  const expected = sign(userId);
+  if (signature.length !== expected.length || !crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return null;
   const sql = db();
   const rows = await sql`SELECT id, email, display_name, default_section_id FROM oq_users WHERE id = ${userId}`;
   return rows[0] ?? null;

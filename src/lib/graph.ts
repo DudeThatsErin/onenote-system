@@ -2,7 +2,7 @@ import { decrypt, encrypt } from '@/lib/crypto';
 import { db } from '@/lib/db';
 
 const TOKEN_URL = 'https://login.microsoftonline.com/common/oauth2/v2.0/token';
-const SCOPES = 'offline_access User.Read Notes.Create Notes.ReadWrite Files.ReadWrite';
+const SCOPES = 'offline_access User.Read Notes.ReadWrite';
 
 async function config() {
   const rows = await db()`SELECT client_id, client_secret_enc FROM oq_config WHERE id = 1`;

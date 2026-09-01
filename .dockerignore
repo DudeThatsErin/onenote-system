@@ -1,0 +1,9 @@
+.git
+.next
+node_modules
+npm-debug.log*
+.env
+.env.*
+!.env.example
+deploy
+plan

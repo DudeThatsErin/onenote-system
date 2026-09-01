@@ -11,7 +11,7 @@ services:
     environment:
       POSTGRES_DB: onenote_queue
       POSTGRES_USER: onenote_queue
-      POSTGRES_PASSWORD: change-me-before-running
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env before starting}
     volumes: [postgres_data:/var/lib/postgresql/data]
 volumes:
   postgres_data:
