@@ -4,6 +4,13 @@ import { db } from '@/lib/db';
 
 const COOKIE = 'onenote_system_session';
 
+export type SessionUser = {
+  id: string;
+  email: string | null;
+  display_name: string | null;
+  default_section_id: string | null;
+};
+
 function sign(value: string) {
   const secret = process.env.APP_ENCRYPTION_KEY;
   if (!secret) throw new Error('APP_ENCRYPTION_KEY is not configured.');
@@ -23,7 +30,7 @@ export async function currentUser() {
   if (signature.length !== expected.length || !crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return null;
   const sql = db();
   const rows = await sql`SELECT id, email, display_name, default_section_id FROM ons_users WHERE id = ${userId}`;
-  return rows[0] ?? null;
+  return (rows[0] as SessionUser | undefined) ?? null;
 }
 
 export async function requireUser() {

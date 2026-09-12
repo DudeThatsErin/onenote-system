@@ -56,7 +56,7 @@ The site documentation explains what each service is, why it is required, and ea
 
 | Name | Required | Purpose |
 | --- | --- | --- |
-| `DATABASE_URL` | Yes | Neon/Supabase/PostgreSQL connection string |
+| `DATABASE_URL` | Yes | Neon/Supabase/PostgreSQL connection string. Neon and Vercel Postgres hosts use Neon's HTTP driver; every other host uses a regular PostgreSQL connection. |
 | `APP_URL` | Yes | Public HTTPS origin, with no trailing slash |
 | `APP_ENCRYPTION_KEY` | Yes | Encrypts Microsoft credentials and signs sessions |
 | `POSTGRES_PASSWORD` | Docker only | Password for the bundled PostgreSQL container |
@@ -110,9 +110,11 @@ Use either `pageTitle` to find an exact title in the configured default section 
 
 ## Discord
 
-Setup Step 6 stores the Discord application ID, public key, encrypted bot token, and optional test server ID. It provides the exact interactions endpoint, registers the `/onenote` command through Discord API v10, and can remove the command again. Incoming requests must have a current timestamp and a valid Ed25519 signature before the app responds to PING or handles a command.
+Setup Step 6 stores the Discord application ID, public key, encrypted bot token, optional test server ID, and the list of Discord user IDs allowed to run the command. It provides the exact interactions endpoint, registers the `/onenote` command through Discord API v10, and can remove the command again. Incoming requests must have a current timestamp and a valid Ed25519 signature before the app responds to PING or handles a command.
 
 `/onenote create` creates a page in the configured default section. `/onenote append` finds an exact page title in that section and appends text. Results are ephemeral Discord responses.
+
+The command writes into the configuring user's OneNote, so being able to see it in a server is not permission to use it. Only the Discord accounts listed in **Allowed Discord user IDs** may run it, and an empty list denies everyone rather than defaulting to open.
 
 ## Privacy and security
 

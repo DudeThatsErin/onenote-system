@@ -3,6 +3,7 @@ import {
   DISCORD_COMMAND_NAME,
   discordConfig,
   editDiscordResponse,
+  invokingUserId,
   verifyDiscordRequest,
 } from '@/lib/discord';
 import { appendToOneNotePage, createOneNotePage, sourceUrl } from '@/lib/onenote';
@@ -20,6 +21,8 @@ type DiscordInteraction = {
   application_id?: string;
   token?: string;
   type?: number;
+  member?: { user?: { id?: string } };
+  user?: { id?: string };
   data?: { name?: string; options?: DiscordOption[] };
 };
 
@@ -78,7 +81,18 @@ async function runCommand(interaction: DiscordInteraction, config: NonNullable<A
     throw new Error('Choose the create or append action.');
   } catch (error) {
     const message = error instanceof Error ? error.message : 'The OneNote request failed.';
-    await editDiscordResponse(config.applicationId, interaction.token, `OneNote System could not finish: ${message}`);
+    // The response edit can fail too -- an expired interaction token, or Discord
+    // being down. Letting that escape would replace a useful OneNote error with
+    // an anonymous `after()` stack trace, so report both and swallow the second.
+    try {
+      await editDiscordResponse(config.applicationId, interaction.token, `OneNote System could not finish: ${message}`);
+    } catch (replyError) {
+      const reason = replyError instanceof Error ? replyError.message : 'unknown error';
+      console.error(
+        `Discord /${DISCORD_COMMAND_NAME} ${subcommand?.name ?? 'unknown'} failed (${message}), ` +
+        `and the reply could not be delivered (${reason}).`,
+      );
+    }
   }
 }
 
@@ -111,6 +125,22 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({
         type: 4,
         data: { content: 'This interaction is not supported.', flags: EPHEMERAL, allowed_mentions: { parse: [] } },
+      });
+    }
+
+    // Checked before deferring: being able to see the command is not permission
+    // to write into someone else's notebook.
+    const caller = invokingUserId(interaction);
+    if (!config.allowedUserIds.includes(caller)) {
+      return NextResponse.json({
+        type: 4,
+        data: {
+          content: config.allowedUserIds.length
+            ? `You are not allowed to use this OneNote System deployment.${caller ? ` Your Discord user ID is \`${caller}\`.` : ''}`
+            : 'No Discord accounts are allowed to use this deployment yet. Add your Discord user ID in Setup Step 6.',
+          flags: EPHEMERAL,
+          allowed_mentions: { parse: [] },
+        },
       });
     }
 

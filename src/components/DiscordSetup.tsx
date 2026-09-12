@@ -7,6 +7,7 @@ type DiscordStatus = {
   applicationId?: string;
   publicKey?: string;
   testGuildId?: string;
+  allowedUserIds?: string;
   hasBotToken?: boolean;
   registered?: boolean;
   registeredScope?: string | null;
@@ -28,6 +29,7 @@ export default function DiscordSetup() {
   const [publicKey, setPublicKey] = useState('');
   const [botToken, setBotToken] = useState('');
   const [testGuildId, setTestGuildId] = useState('');
+  const [allowedUserIds, setAllowedUserIds] = useState('');
   const [endpoint, setEndpoint] = useState('/api/discord/interactions');
   const [status, setStatus] = useState<DiscordStatus>({});
   const [message, setMessage] = useState('Loading Discord settings…');
@@ -42,6 +44,7 @@ export default function DiscordSetup() {
     setApplicationId(data.applicationId || '');
     setPublicKey(data.publicKey || '');
     setTestGuildId(data.testGuildId || '');
+    setAllowedUserIds(data.allowedUserIds || '');
     setMessage(data.registered
       ? 'The /onenote command is registered ' + (data.registeredScope === 'global' ? 'globally.' : 'in your test server.')
       : data.configured ? 'Discord settings are saved. Register the /onenote command next.' : 'Add your Discord application details below.');
@@ -62,7 +65,7 @@ export default function DiscordSetup() {
     const response = await fetch('/api/discord/config', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ applicationId, publicKey, botToken, testGuildId }),
+      body: JSON.stringify({ applicationId, publicKey, botToken, testGuildId, allowedUserIds }),
     });
     const data = await responseData(response);
     if (!response.ok) throw new Error(data.error || 'Could not save Discord settings.');
@@ -147,6 +150,8 @@ export default function DiscordSetup() {
       <label>Application ID<span className="field-help">General Information → Application ID.</span><input inputMode="numeric" autoComplete="off" value={applicationId} onChange={(event) => setApplicationId(event.target.value)} /></label>
       <label>Public Key<span className="field-help">General Information → Public Key. This is a 64-character hexadecimal value.</span><input autoCapitalize="none" autoComplete="off" spellCheck={false} value={publicKey} onChange={(event) => setPublicKey(event.target.value)} /></label>
       <label>Bot token<span className="field-help">Required for command registration. Leave blank later to keep the encrypted token already saved.</span><input type="password" autoComplete="new-password" value={botToken} onChange={(event) => setBotToken(event.target.value)} placeholder={status.hasBotToken ? 'Saved securely — leave blank to keep it' : ''} /></label>
+      <label>Allowed Discord user IDs <span className="field-help">Only these Discord accounts may run <code>/onenote</code>. The command writes into <em>your</em> OneNote, so anyone listed here can add pages to your notebook. Separate several IDs with commas. Leave blank to allow nobody. To find your ID, enable Developer Mode in Discord, then right-click your name and choose Copy User ID.</span><input inputMode="numeric" autoComplete="off" placeholder="123456789012345678" value={allowedUserIds} onChange={(event) => setAllowedUserIds(event.target.value)} /></label>
+
       <label>Test server (Guild) ID <span className="optional">Optional</span><span className="field-help">Use a server ID while testing for immediate updates. Leave blank to register the command globally.</span><input inputMode="numeric" autoComplete="off" value={testGuildId} onChange={(event) => setTestGuildId(event.target.value)} /></label>
       <label>Interactions Endpoint URL<span className="field-help">Paste this exact URL into Discord after saving the fields above.</span><span className="copy-field"><input readOnly value={endpoint} /><button className="button secondary" type="button" onClick={copyEndpoint}>Copy</button></span></label>
 

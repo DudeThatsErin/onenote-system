@@ -42,6 +42,7 @@ export type DiscordConfig = {
   testGuildId: string | null;
   userId: string;
   defaultSectionId: string | null;
+  allowedUserIds: string[];
   commandId: string | null;
   registeredScope: string | null;
   registeredAt: string | null;
@@ -54,6 +55,7 @@ type DiscordConfigRow = {
   test_guild_id: string | null;
   user_id: string;
   default_section_id: string | null;
+  allowed_user_ids: string | null;
   command_id: string | null;
   registered_scope: string | null;
   registered_at: string | null;
@@ -61,7 +63,7 @@ type DiscordConfigRow = {
 
 export async function discordConfig({ includeBotToken = false }: { includeBotToken?: boolean } = {}): Promise<DiscordConfig | null> {
   const rows = await db()`SELECT d.application_id, d.public_key, d.bot_token_enc,
-      d.test_guild_id, d.user_id, d.command_id, d.registered_scope,
+      d.test_guild_id, d.user_id, d.allowed_user_ids, d.command_id, d.registered_scope,
       d.registered_at, u.default_section_id
     FROM ons_discord_config d
     JOIN ons_users u ON u.id = d.user_id
@@ -75,10 +77,29 @@ export async function discordConfig({ includeBotToken = false }: { includeBotTok
     testGuildId: row.test_guild_id,
     userId: row.user_id,
     defaultSectionId: row.default_section_id,
+    allowedUserIds: parseUserIds(row.allowed_user_ids),
     commandId: row.command_id,
     registeredScope: row.registered_scope,
     registeredAt: row.registered_at,
   };
+}
+
+// The command writes into one person's OneNote, so membership of the server is
+// not permission to use it. Only the Discord accounts listed during setup may
+// run it; an empty list denies everyone rather than defaulting to open.
+export function parseUserIds(value: string | null | undefined) {
+  return String(value ?? '')
+    .split(',')
+    .map((id) => id.trim())
+    .filter((id) => /^\d{17,20}$/.test(id));
+}
+
+export function invokingUserId(interaction: {
+  member?: { user?: { id?: string } };
+  user?: { id?: string };
+}) {
+  // Discord sends `member.user` inside a server and `user` in a DM.
+  return interaction.member?.user?.id ?? interaction.user?.id ?? '';
 }
 
 export function verifyDiscordRequest(
