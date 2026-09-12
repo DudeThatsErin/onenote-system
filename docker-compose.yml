@@ -9,8 +9,8 @@ services:
     image: postgres:17-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: onenote_queue
-      POSTGRES_USER: onenote_queue
+      POSTGRES_DB: onenote_system
+      POSTGRES_USER: onenote_system
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env before starting}
     volumes: [postgres_data:/var/lib/postgresql/data]
 volumes:

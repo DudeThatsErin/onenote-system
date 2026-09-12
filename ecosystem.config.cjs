@@ -1,7 +1,7 @@
 module.exports = {
   apps: [{
-    name: 'onenotequeue.erinskidds.com',
-    cwd: '/var/www/onenotequeue.erinskidds.com',
+    name: 'onenotesystem.erinskidds.com',
+    cwd: '/var/www/onenotesystem.erinskidds.com',
     script: 'node_modules/next/dist/bin/next',
     args: 'start -p 3002',
     env: { NODE_ENV: 'production' },

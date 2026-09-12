@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { authenticateApiKey, markApiKeyUsed } from '@/lib/apiKey';
-import { graph } from '@/lib/graph';
-import { escapeHtml, MAX_NOTE_CONTENT_LENGTH, plainTextHtml } from '@/lib/onenoteContent';
+import { MAX_NOTE_CONTENT_LENGTH } from '@/lib/onenoteContent';
+import { createOneNotePage, sourceUrl } from '@/lib/onenote';
 export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
@@ -12,11 +12,8 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const title = typeof body.title === 'string' && body.title.trim() ? body.title.trim().slice(0, 200) : 'Untitled capture';
     const content = typeof body.content === 'string' ? body.content.slice(0, MAX_NOTE_CONTENT_LENGTH) : '';
-    const sourceUrl = typeof body.url === 'string' && /^https?:\/\//.test(body.url) ? body.url : null;
-    const html = `<!doctype html><html><head><title>${escapeHtml(title)}</title></head><body><h1>${escapeHtml(title)}</h1>${plainTextHtml(content, sourceUrl)}</body></html>`;
-    const result = await graph(key.userId, `/me/onenote/sections/${encodeURIComponent(key.defaultSectionId)}/pages`, { method: 'POST', headers: { 'content-type': 'text/html' }, body: html });
+    const page = await createOneNotePage(key.userId, key.defaultSectionId, title, content, sourceUrl(body.url));
     await markApiKeyUsed(key.id);
-    const page = await result.json();
-    return NextResponse.json({ ok: true, page: { id: page.id, title: page.title, webUrl: page.links?.oneNoteWebUrl?.href } }, { status: 201 });
+    return NextResponse.json({ ok: true, page }, { status: 201 });
   } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : 'Capture failed.' }, { status: 500 }); }
 }

@@ -11,7 +11,7 @@ export const runtime = 'nodejs';
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get('code');
   const state = req.nextUrl.searchParams.get('state');
-  const expected = (await cookies()).get('onenote_queue_oauth_state')?.value;
+  const expected = (await cookies()).get('onenote_system_oauth_state')?.value;
   if (!code || !state || !expected || state.length !== expected.length || !crypto.timingSafeEqual(Buffer.from(state), Buffer.from(expected))) return NextResponse.redirect(new URL('/?error=Microsoft%20authorization%20could%20not%20be%20verified.', req.url));
   try {
     await ensureSchema();
@@ -21,10 +21,10 @@ export async function GET(req: NextRequest) {
     const id = crypto.randomUUID();
     const expiresAt = new Date(Date.now() + tokens.expires_in * 1000).toISOString();
     const sql = db();
-    const rows = await sql`INSERT INTO oq_users (id, microsoft_id, email, display_name, access_token_enc, refresh_token_enc, expires_at) VALUES (${id}, ${me.data.id}, ${me.data.mail || me.data.userPrincipalName || null}, ${me.data.displayName || null}, ${encrypt(tokens.access_token)}, ${encrypt(tokens.refresh_token)}, ${expiresAt}) ON CONFLICT (microsoft_id) DO UPDATE SET email=excluded.email, display_name=excluded.display_name, access_token_enc=excluded.access_token_enc, refresh_token_enc=excluded.refresh_token_enc, expires_at=excluded.expires_at, updated_at=now() RETURNING id`;
+    const rows = await sql`INSERT INTO ons_users (id, microsoft_id, email, display_name, access_token_enc, refresh_token_enc, expires_at) VALUES (${id}, ${me.data.id}, ${me.data.mail || me.data.userPrincipalName || null}, ${me.data.displayName || null}, ${encrypt(tokens.access_token)}, ${encrypt(tokens.refresh_token)}, ${expiresAt}) ON CONFLICT (microsoft_id) DO UPDATE SET email=excluded.email, display_name=excluded.display_name, access_token_enc=excluded.access_token_enc, refresh_token_enc=excluded.refresh_token_enc, expires_at=excluded.expires_at, updated_at=now() RETURNING id`;
     await setSession(rows[0].id as string);
     const response = NextResponse.redirect(new URL('/setup?connected=1', req.url));
-    response.cookies.delete('onenote_queue_oauth_state');
+    response.cookies.delete('onenote_system_oauth_state');
     return response;
   } catch (error) { return NextResponse.redirect(new URL(`/?error=${encodeURIComponent(error instanceof Error ? error.message : 'Microsoft setup failed')}`, req.url)); }
 }

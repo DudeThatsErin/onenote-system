@@ -2,7 +2,7 @@ import Link from 'next/link';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
 
-const DEPLOY_URL = 'https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FDudeThatsErin%2Fonenote-queue&project-name=onenote-queue&repository-name=onenote-queue';
+const DEPLOY_URL = 'https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FDudeThatsErin%2Fonenote-system&project-name=onenote-system&repository-name=onenote-system';
 
 const ENVIRONMENT = `# Required: generate a new random value for each installation
 APP_ENCRYPTION_KEY=PASTE_A_RANDOM_32_BYTE_KEY
@@ -17,16 +17,16 @@ DATABASE_URL=postgresql://...
 CRON_SECRET=PASTE_ANOTHER_LONG_RANDOM_VALUE`;
 
 const CURL = `curl -X POST "https://YOUR-DOMAIN/api/capture" \\
-  -H "Authorization: Bearer oq_YOUR_PRIVATE_KEY" \\
+  -H "Authorization: Bearer ons_YOUR_PRIVATE_KEY" \\
   -H "Content-Type: application/json" \\
   --data '{
-    "title": "Saved from OneNote Queue",
+    "title": "Saved from OneNote System",
     "content": "This becomes the body of a new OneNote page.",
     "url": "https://example.com/source"
   }'`;
 
 const APPEND_CURL = `curl -X POST "https://YOUR-DOMAIN/api/append" \\
-  -H "Authorization: Bearer oq_YOUR_PRIVATE_KEY" \\
+  -H "Authorization: Bearer ons_YOUR_PRIVATE_KEY" \\
   -H "Content-Type: application/json" \\
   --data '{
     "pageTitle": "Quick Inbox",
@@ -34,8 +34,8 @@ const APPEND_CURL = `curl -X POST "https://YOUR-DOMAIN/api/append" \\
     "url": "https://example.com/source"
   }'`;
 
-const SELF_HOST = `git clone https://github.com/DudeThatsErin/onenote-queue.git
-cd onenote-queue
+const SELF_HOST = `git clone https://github.com/DudeThatsErin/onenote-system.git
+cd onenote-system
 cp .env.example .env
 # Edit .env before continuing.
 docker compose up -d --build`;
@@ -45,7 +45,7 @@ export default function DocsPage() {
     <SiteHeader />
     <section className="doc-hero">
       <p className="eyebrow">Documentation</p>
-      <h1>Build and understand your OneNote Queue</h1>
+      <h1>Build and understand your OneNote System</h1>
       <p className="lead">Start with the beginner deployment path, then use this page as the reference for Microsoft permissions, settings, the OneNote APIs, privacy, updates, and common errors.</p>
     </section>
 
@@ -57,6 +57,7 @@ export default function DocsPage() {
       <a href="#microsoft">Microsoft app</a>
       <a href="#connect">Connect OneNote</a>
       <a href="#shortcuts">Shortcuts</a>
+      <a href="#terminal">Terminal</a>
       <a href="#api">OneNote APIs</a>
       <a href="#security">Security</a>
       <a href="#self-hosting">Self-hosting</a>
@@ -68,7 +69,7 @@ export default function DocsPage() {
     <article className="documentation">
       <section id="start">
         <h2>Start here: what you are creating</h2>
-        <p>You are not creating an account on a shared OneNote Queue service. You are making your own copy of the project in accounts you control:</p>
+        <p>You are not creating an account on a shared OneNote System service. You are making your own copy of the project in accounts you control:</p>
         <div className="table-wrap"><table><thead><tr><th>Part</th><th>What it does</th><th>Who controls it</th></tr></thead><tbody>
           <tr><td><strong>GitHub repository</strong></td><td>Holds the open-source code and sends updates to Vercel</td><td>You</td></tr>
           <tr><td><strong>Vercel project</strong></td><td>Runs the website and private capture API on the internet</td><td>You</td></tr>
@@ -81,11 +82,11 @@ export default function DocsPage() {
 
       <section id="vercel">
         <h2>Part 1: deploy your copy to Vercel</h2>
-        <p><strong>What Vercel is:</strong> Vercel runs the OneNote Queue website and API for you. When a Shortcut sends a note, Vercel receives the request and runs the code. Your personal computer does not need to stay on.</p>
+        <p><strong>What Vercel is:</strong> Vercel runs the OneNote System website and API for you. When a Shortcut sends a note, Vercel receives the request and runs the code. Your personal computer does not need to stay on.</p>
         <ol className="steps compact-steps">
           <li><h3>Create or sign in to GitHub</h3><p>Use <a href="https://github.com/signup" target="_blank" rel="noreferrer">GitHub&apos;s sign-up page ↗</a>. GitHub stores your copy of the source code. Keep the repository private if you ever add personal changes, and never commit secret values.</p></li>
-          <li><h3>Open the deployment link</h3><p><a className="button" href={DEPLOY_URL} target="_blank" rel="noreferrer">Deploy OneNote Queue on Vercel ↗</a></p><p>Vercel will ask you to sign in. Choosing <strong>Continue with GitHub</strong> is easiest because Vercel needs permission to create and deploy your copy.</p></li>
-          <li><h3>Create the Git repository</h3><p>On the “Create Git Repository” screen, keep the name <code>onenote-queue</code> or choose another name. This new repository belongs to your GitHub account; it is not the original project.</p></li>
+          <li><h3>Open the deployment link</h3><p><a className="button" href={DEPLOY_URL} target="_blank" rel="noreferrer">Deploy OneNote System on Vercel ↗</a></p><p>Vercel will ask you to sign in. Choosing <strong>Continue with GitHub</strong> is easiest because Vercel needs permission to create and deploy your copy.</p></li>
+          <li><h3>Create the Git repository</h3><p>On the “Create Git Repository” screen, keep the name <code>onenote-system</code> or choose another name. This new repository belongs to your GitHub account; it is not the original project.</p></li>
           <li><h3>Create the first deployment</h3><p>Choose <strong>Deploy</strong>. The first deployment may show setup errors because the database and private settings do not exist yet. That is expected. Wait until Vercel gives you a project URL ending in <code>.vercel.app</code>, then copy that complete URL.</p></li>
         </ol>
         <p>Vercel can automatically deploy later changes pushed to the connected GitHub repository. See Vercel&apos;s official <a href="https://vercel.com/docs/git" target="_blank" rel="noreferrer">Git deployment documentation ↗</a> for how that relationship works.</p>
@@ -97,10 +98,10 @@ export default function DocsPage() {
         <p><strong>Why this is required:</strong> Vercel functions do not keep permanent files between requests. The database remembers your encrypted Microsoft connection, default section, and API keys after each request ends.</p>
         <ol className="steps compact-steps">
           <li><h3>Open Neon inside the Vercel Marketplace</h3><p>Visit the <a href="https://vercel.com/marketplace/neon" target="_blank" rel="noreferrer">official Neon Marketplace listing ↗</a> while signed in to Vercel.</p></li>
-          <li><h3>Add the integration</h3><p>Choose <strong>Add Integration</strong>. Select your Vercel account and the OneNote Queue project you created above. Continue to Neon and create an account if asked.</p></li>
-          <li><h3>Create the database</h3><p>Use a recognizable project name such as <code>onenote-queue</code>. Use the region closest to you. Keep the generated database and role defaults unless you know you need something different.</p></li>
-          <li><h3>Confirm the project connection</h3><p>Neon/Vercel should add an environment variable named <code>DATABASE_URL</code> to the OneNote Queue project. You do not need to open or copy its value.</p></li>
-          <li><h3>Redeploy</h3><p>In Vercel, open your OneNote Queue project, then <strong>Deployments</strong>. Open the <strong>⋯</strong> menu beside the newest deployment and choose <strong>Redeploy</strong>. Existing deployments cannot see settings added afterward.</p></li>
+          <li><h3>Add the integration</h3><p>Choose <strong>Add Integration</strong>. Select your Vercel account and the OneNote System project you created above. Continue to Neon and create an account if asked.</p></li>
+          <li><h3>Create the database</h3><p>Use a recognizable project name such as <code>onenote-system</code>. Use the region closest to you. Keep the generated database and role defaults unless you know you need something different.</p></li>
+          <li><h3>Confirm the project connection</h3><p>Neon/Vercel should add an environment variable named <code>DATABASE_URL</code> to the OneNote System project. You do not need to open or copy its value.</p></li>
+          <li><h3>Redeploy</h3><p>In Vercel, open your OneNote System project, then <strong>Deployments</strong>. Open the <strong>⋯</strong> menu beside the newest deployment and choose <strong>Redeploy</strong>. Existing deployments cannot see settings added afterward.</p></li>
         </ol>
         <div className="callout warning"><p><strong>Never share DATABASE_URL.</strong> Despite its name, it contains the database hostname, username, and password. Neon&apos;s official <a href="https://neon.com/docs/guides/vercel-manual" target="_blank" rel="noreferrer">manual Vercel connection guide ↗</a> is available if the Marketplace integration does not add it automatically.</p></div>
       </section>
@@ -110,7 +111,7 @@ export default function DocsPage() {
         <p>An <strong>environment variable</strong> is a private setting Vercel gives to the running app without placing it in GitHub. Open your Vercel project, then <strong>Settings → Environment Variables</strong>.</p>
         <div className="table-wrap"><table><thead><tr><th>Name</th><th>Required?</th><th>What to enter</th></tr></thead><tbody>
           <tr><td><code>APP_ENCRYPTION_KEY</code></td><td>Yes</td><td>A new random secret used to encrypt Microsoft credentials and sign login cookies. Generate it once and do not change it casually.</td></tr>
-          <tr><td><code>APP_URL</code></td><td>Yes</td><td>Your complete production URL, such as <code>https://onenote-queue-abc.vercel.app</code>, with no trailing slash.</td></tr>
+          <tr><td><code>APP_URL</code></td><td>Yes</td><td>Your complete production URL, such as <code>https://onenote-system-abc.vercel.app</code>, with no trailing slash.</td></tr>
           <tr><td><code>DATABASE_URL</code></td><td>Yes</td><td>Neon should add this automatically. Do not replace it with the words shown in the example.</td></tr>
           <tr><td><code>CRON_SECRET</code></td><td>No</td><td>A separate random secret. The current maintenance endpoint performs no synchronization work, so this can be omitted.</td></tr>
         </tbody></table></div>
@@ -127,10 +128,10 @@ export default function DocsPage() {
         <ol className="steps compact-steps">
           <li><h3>Open Microsoft Entra</h3><p>Go to the <a href="https://entra.microsoft.com/" target="_blank" rel="noreferrer">Microsoft Entra admin center ↗</a> and sign in with the Microsoft account that owns the OneNote notebooks. Personal Microsoft accounts may be redirected through an account/tenant setup screen.</p></li>
           <li><h3>Start an app registration</h3><p>Open <strong>Identity → Applications → App registrations</strong>, then choose <strong>New registration</strong>. Microsoft&apos;s official <a href="https://learn.microsoft.com/en-us/graph/auth-register-app-v2" target="_blank" rel="noreferrer">app registration guide ↗</a> includes screenshots and definitions.</p></li>
-          <li><h3>Name it and choose account access</h3><p>Name it <code>OneNote Queue</code>. Choose <strong>Accounts in any organizational directory and personal Microsoft accounts</strong> if you want the deployment to accept either work/school or personal Microsoft accounts.</p></li>
+          <li><h3>Name it and choose account access</h3><p>Name it <code>OneNote System</code>. Choose <strong>Accounts in any organizational directory and personal Microsoft accounts</strong> if you want the deployment to accept either work/school or personal Microsoft accounts.</p></li>
           <li><h3>Add the Web redirect URI</h3><p>For platform, choose <strong>Web</strong>. Enter <code>https://YOUR-VERCEL-DOMAIN/api/auth/microsoft/callback</code>. Replace only <code>YOUR-VERCEL-DOMAIN</code>. Example: <code>https://my-queue.vercel.app/api/auth/microsoft/callback</code>.</p></li>
           <li><h3>Copy the Application (client) ID</h3><p>After registration, the Overview screen shows an <strong>Application (client) ID</strong>. Copy the long identifier. Do not copy the Object ID or Directory ID.</p></li>
-          <li><h3>Create a client secret</h3><p>Open <strong>Certificates &amp; secrets → Client secrets → New client secret</strong>. Name it <code>OneNote Queue</code>, choose an expiration, and create it. Copy the secret&apos;s <strong>Value</strong> immediately. Do not copy the Secret ID. Microsoft will never display the Value again.</p></li>
+          <li><h3>Create a client secret</h3><p>Open <strong>Certificates &amp; secrets → Client secrets → New client secret</strong>. Name it <code>OneNote System</code>, choose an expiration, and create it. Copy the secret&apos;s <strong>Value</strong> immediately. Do not copy the Secret ID. Microsoft will never display the Value again.</p></li>
           <li><h3>Add Microsoft Graph permissions</h3><p>Open <strong>API permissions → Add a permission → Microsoft Graph → Delegated permissions</strong>. Add <code>User.Read</code> and <code>Notes.ReadWrite</code>. <code>offline_access</code> is requested during Microsoft sign-in so the connection can refresh without asking you every hour.</p></li>
         </ol>
         <p>Microsoft&apos;s Graph documentation confirms that creating OneNote pages uses delegated OneNote permissions and that page content is sent as HTML. See <a href="https://learn.microsoft.com/en-us/graph/api/onenote-post-pages?view=graph-rest-1.0" target="_blank" rel="noreferrer">Create OneNote pages ↗</a>.</p>
@@ -149,17 +150,27 @@ export default function DocsPage() {
 
       <section id="shortcuts">
         <h2>Part 6: install or build a Shortcut</h2>
-        <p>The Shortcut needs two values: your deployment URL and the <code>oq_</code> API key from Setup Step 5. It does not need your Microsoft client secret, Microsoft password, database URL, or encryption key.</p>
+        <p>The Shortcut needs two values: your deployment URL and the <code>ons_</code> API key from Setup Step 5. It does not need your Microsoft client secret, Microsoft password, database URL, or encryption key.</p>
         <p><Link className="button" href="/shortcuts">Open the complete Shortcuts guide →</Link></p>
         <p>The Shortcuts page identifies which iCloud download links are still missing, explains every configuration answer, and includes a complete manual Quick Inbox build that works without a download.</p>
+      </section>
+
+      <section id="terminal">
+        <h2>Part 7: use OneNote from a terminal</h2>
+        <p>The <code>onenotesystem</code> command is the official command-line client. It takes the same two values a Shortcut does — your deployment URL and an <code>ons_</code> API key — and calls the same two endpoints, so pages created from a shell and pages created from a phone are identical.</p>
+        <pre><code>npm install -g onenotesystem
+onenotesystem configure
+onenotesystem capture &quot;Standup notes&quot; --content &quot;Shipped the CLI&quot;</code></pre>
+        <p>It exists for the machines OneNote will not run on: Linux desktops, servers you only reach over SSH, and work computers where the OneNote app cannot be installed. It needs Node.js 18.17 or newer and has no other dependencies.</p>
+        <p><Link className="button" href="/terminal">Open the complete terminal guide →</Link></p>
       </section>
 
       <section id="api">
         <h2>OneNote API reference</h2>
         <p>The API can create a page in the signed-in user&apos;s default section or append plain text to an existing page.</p>
         <div className="table-wrap"><table><thead><tr><th>Method</th><th>Path</th><th>Authentication</th><th>Success</th></tr></thead><tbody>
-          <tr><td><code>POST</code></td><td><code>/api/capture</code></td><td><code>Authorization: Bearer oq_…</code></td><td><code>201 Created</code></td></tr>
-          <tr><td><code>POST</code></td><td><code>/api/append</code></td><td><code>Authorization: Bearer oq_…</code></td><td><code>200 OK</code></td></tr>
+          <tr><td><code>POST</code></td><td><code>/api/capture</code></td><td><code>Authorization: Bearer ons_…</code></td><td><code>201 Created</code></td></tr>
+          <tr><td><code>POST</code></td><td><code>/api/append</code></td><td><code>Authorization: Bearer ons_…</code></td><td><code>200 OK</code></td></tr>
         </tbody></table></div>
         <h3>Create a page: <code>POST /api/capture</code></h3>
         <div className="table-wrap"><table><thead><tr><th>JSON field</th><th>Required?</th><th>Limit and behavior</th></tr></thead><tbody>
@@ -174,7 +185,7 @@ export default function DocsPage() {
   "ok": true,
   "page": {
     "id": "…",
-    "title": "Saved from OneNote Queue",
+    "title": "Saved from OneNote System",
     "webUrl": "https://…"
   }
 }`}</code></pre>
@@ -203,11 +214,14 @@ export default function DocsPage() {
         <h2>Security and data storage</h2>
         <div className="table-wrap"><table><thead><tr><th>Information</th><th>Where it is stored</th><th>Protection</th></tr></thead><tbody>
           <tr><td>Setup step number</td><td>Your browser&apos;s <code>localStorage</code></td><td>Not sensitive; used only to reopen the last viewed step</td></tr>
+          <tr><td>Light/dark preference</td><td>Your browser&apos;s <code>localStorage</code></td><td>Not sensitive; used to restore the selected theme before the page appears</td></tr>
           <tr><td>Login session</td><td>HttpOnly cookie</td><td>Signed; JavaScript cannot read it; Secure in production</td></tr>
           <tr><td>Microsoft client secret</td><td>Your database</td><td>AES-256-GCM encrypted using <code>APP_ENCRYPTION_KEY</code></td></tr>
           <tr><td>Microsoft access/refresh tokens</td><td>Your database</td><td>AES-256-GCM encrypted</td></tr>
+          <tr><td>Discord bot token</td><td>Your database</td><td>AES-256-GCM encrypted; never returned to the browser after saving</td></tr>
+          <tr><td>Discord public key and application IDs</td><td>Your database</td><td>Not secrets; used to verify and route signed interactions</td></tr>
           <tr><td>Shortcut API keys</td><td>Your database</td><td>One-way SHA-256 hash; original shown once</td></tr>
-          <tr><td>Captured note text</td><td>Sent to Microsoft during the request</td><td>Not intentionally retained by the OneNote Queue database</td></tr>
+          <tr><td>Captured note text</td><td>Sent to Microsoft during the request</td><td>Not intentionally retained by the OneNote System database</td></tr>
         </tbody></table></div>
         <p>Keep <code>APP_ENCRYPTION_KEY</code>, <code>DATABASE_URL</code>, Microsoft client secrets, refresh tokens, API keys, and Discord bot tokens out of GitHub and screenshots. If an API key leaks, create a replacement. Key revocation UI is not yet included, so database/manual administration is currently required to remove an old key.</p>
         <p>This software is provided under the MIT License without warranty. Review the source and provider terms before using it for sensitive or regulated information.</p>
@@ -239,10 +253,22 @@ docker compose logs --tail=100 app`}</code></pre>
       </section>
 
       <section id="advanced-discord">
-        <h2>Advanced Discord integration</h2>
-        <div className="callout warning"><p><strong>Status: not operational in this release.</strong> The setup screen can describe and reserve Discord configuration, but the HTTP interaction handler and command registration are not implemented yet. Do not create a production Discord app or paste a bot token until the adapter is released.</p></div>
-        <p>The planned Vercel-compatible approach uses Discord HTTP interactions, which do not require an always-running bot process. It will require a Discord Application ID, Public Key, and an Interactions Endpoint URL ending in <code>/api/discord/interactions</code>. Every request must pass Discord&apos;s Ed25519 signature check and PING validation before Discord accepts the endpoint.</p>
-        <p>See Discord&apos;s official <a href="https://docs.discord.com/developers/interactions/overview" target="_blank" rel="noreferrer">Interactions overview ↗</a>. A bot token will be necessary only if a future self-hosted gateway mode is added; it must never appear in a browser, Shortcut, repository, or public environment variable.</p>
+        <h2>Discord integration</h2>
+        <p>Setup Step 6 connects a Discord application to the same Microsoft account and default OneNote section used by this installation. It registers one <code>/onenote</code> command with two actions:</p>
+        <ul>
+          <li><code>/onenote create</code> creates a page from a title, optional text, and optional source URL.</li>
+          <li><code>/onenote append</code> adds text and an optional source URL to an exact page title in the default section.</li>
+        </ul>
+        <h3>Discord application setup</h3>
+        <ol className="steps compact-steps">
+          <li><h3>Create the application</h3><p>Open the <a href="https://discord.com/developers/applications" target="_blank" rel="noreferrer">Discord Developer Portal ↗</a>, create an application, and copy the Application ID and Public Key from General Information.</p></li>
+          <li><h3>Create the bot token</h3><p>Open Bot, reset the token, and save it in Setup Step 6. OneNote System encrypts it. The token is used only when registering or removing the slash command; interaction responses use Discord&apos;s signed webhook flow.</p></li>
+          <li><h3>Save the interaction endpoint</h3><p>Save the Discord fields in OneNote System first. Copy the exact URL ending in <code>/api/discord/interactions</code> into General Information → Interactions Endpoint URL. Discord sends a signed PING and the endpoint returns PONG during validation.</p></li>
+          <li><h3>Install and register the command</h3><p>Use the installation link to authorize the <code>applications.commands</code> scope. Then choose <strong>Save and register /onenote</strong>. A test server ID creates a guild command that updates immediately; leaving it blank creates a global command.</p></li>
+          <li><h3>Test both actions</h3><p>Run <code>/onenote create</code>, then run <code>/onenote append</code> with that page&apos;s exact title. Discord shows a private result and links to the OneNote page when Microsoft supplies a web URL.</p></li>
+        </ol>
+        <p>The endpoint validates the raw request body with Discord&apos;s Ed25519 signature headers, acknowledges commands within Discord&apos;s three-second window, completes Microsoft Graph work in the background, and edits the private response afterward. See Discord&apos;s official <a href="https://docs.discord.com/developers/interactions/overview" target="_blank" rel="noreferrer">interaction security guide ↗</a> and <a href="https://docs.discord.com/developers/interactions/application-commands" target="_blank" rel="noreferrer">application command reference ↗</a>.</p>
+        <div className="callout warning"><p>Anyone allowed to run this command can write to your selected OneNote section. Keep the Discord application private or restrict command access in Discord. If the bot token leaks, reset it in Discord and save the replacement in Setup Step 6.</p></div>
       </section>
 
       <section id="troubleshooting">
@@ -252,10 +278,12 @@ docker compose logs --tail=100 app`}</code></pre>
           <details><summary>Microsoft says the redirect URI does not match</summary><p>Compare the URI in Entra with <code>APP_URL</code> plus <code>/api/auth/microsoft/callback</code>. They must match exactly, including <code>https</code>, subdomain, path, and absence of a trailing slash.</p></details>
           <details><summary>Microsoft sign-in works but notebooks do not load</summary><p>Confirm that the app registration has delegated <code>Notes.ReadWrite</code> permission and that you approved it. Reconnect the Microsoft account after changing permissions.</p></details>
           <details><summary>APP_ENCRYPTION_KEY is not configured</summary><p>Add a strong random value in Vercel Environment Variables and redeploy. Do not change an existing key after credentials are stored; old encrypted values cannot be decrypted with a new key.</p></details>
-          <details><summary>The Shortcut receives Unauthorized</summary><p>Confirm the header is exactly <code>Authorization: Bearer oq_…</code>. There must be one space after <code>Bearer</code>. The key must come from the same deployment receiving the request.</p></details>
+          <details><summary>The Shortcut receives Unauthorized</summary><p>Confirm the header is exactly <code>Authorization: Bearer ons_…</code>. There must be one space after <code>Bearer</code>. The key must come from the same deployment receiving the request.</p></details>
           <details><summary>The Shortcut says no default section is selected</summary><p>Open Setup Step 4 on the same deployment and choose a notebook and section while signed in with Microsoft.</p></details>
           <details><summary>A secret expired</summary><p>Create a new Microsoft client secret Value in Entra, save it through Setup Step 2, then reconnect Microsoft. Microsoft recommends rotating credentials and client secrets have limited lifetimes.</p></details>
-          <details><summary>Where can I report a reproducible bug?</summary><p>Remove every secret and personal note from screenshots/logs, then open a <a href="https://github.com/DudeThatsErin/onenote-queue/issues" target="_blank" rel="noreferrer">GitHub issue ↗</a> with the deployment type, route, status code, and exact non-secret error.</p></details>
+          <details><summary>Discord rejects the Interactions Endpoint URL</summary><p>Save the Application ID and Public Key in Setup Step 6 before pasting the endpoint into Discord. Confirm the URL uses HTTPS and ends exactly in <code>/api/discord/interactions</code>. A wrong public key causes the required signature check to return <code>401</code>.</p></details>
+          <details><summary>The /onenote command does not appear</summary><p>Use a test server ID for immediate testing, confirm the application was installed with the <code>applications.commands</code> scope, and choose <strong>Save and register /onenote</strong> again. Global command changes can take longer to propagate through Discord.</p></details>
+          <details><summary>Where can I report a reproducible bug?</summary><p>Remove every secret and personal note from screenshots/logs, then open a <a href="https://github.com/DudeThatsErin/onenote-system/issues" target="_blank" rel="noreferrer">GitHub issue ↗</a> with the deployment type, route, status code, and exact non-secret error.</p></details>
         </div>
       </section>
     </article>

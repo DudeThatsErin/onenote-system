@@ -12,8 +12,8 @@ export async function authenticateApiKey(authorization: string | null): Promise<
   if (!match) return null;
 
   const rows = await db()`SELECT k.id, k.user_id, u.default_section_id
-    FROM oq_api_keys k
-    JOIN oq_users u ON u.id = k.user_id
+    FROM ons_api_keys k
+    JOIN ons_users u ON u.id = k.user_id
     WHERE k.token_hash = ${hash(match[1])}`;
   const key = rows[0];
   if (!key) return null;
@@ -26,5 +26,5 @@ export async function authenticateApiKey(authorization: string | null): Promise<
 }
 
 export async function markApiKeyUsed(id: string) {
-  await db()`UPDATE oq_api_keys SET last_used_at = now() WHERE id = ${id}`;
+  await db()`UPDATE ons_api_keys SET last_used_at = now() WHERE id = ${id}`;
 }

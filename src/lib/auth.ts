@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import { cookies } from 'next/headers';
 import { db } from '@/lib/db';
 
-const COOKIE = 'onenote_queue_session';
+const COOKIE = 'onenote_system_session';
 
 function sign(value: string) {
   const secret = process.env.APP_ENCRYPTION_KEY;
@@ -22,7 +22,7 @@ export async function currentUser() {
   const expected = sign(userId);
   if (signature.length !== expected.length || !crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expected))) return null;
   const sql = db();
-  const rows = await sql`SELECT id, email, display_name, default_section_id FROM oq_users WHERE id = ${userId}`;
+  const rows = await sql`SELECT id, email, display_name, default_section_id FROM ons_users WHERE id = ${userId}`;
   return rows[0] ?? null;
 }
 

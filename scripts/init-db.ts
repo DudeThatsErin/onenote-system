@@ -1,2 +1,2 @@
 import { ensureSchema } from '../src/lib/db';
-ensureSchema().then(() => console.log('OneNote Queue database schema is ready.'));
+ensureSchema().then(() => console.log('OneNote System database schema is ready.'));

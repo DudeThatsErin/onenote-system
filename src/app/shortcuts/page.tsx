@@ -2,8 +2,8 @@ import Link from 'next/link';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
 
-const REQUEST = `POST https://YOUR-ONENOTE-QUEUE-DOMAIN/api/capture
-Authorization: Bearer oq_YOUR_PRIVATE_KEY
+const REQUEST = `POST https://YOUR-ONENOTE-SYSTEM-DOMAIN/api/capture
+Authorization: Bearer ons_YOUR_PRIVATE_KEY
 Content-Type: application/json
 
 {
@@ -12,8 +12,8 @@ Content-Type: application/json
   "url": "https://optional-source.example"
 }`;
 
-const APPEND_REQUEST = `POST https://YOUR-ONENOTE-QUEUE-DOMAIN/api/append
-Authorization: Bearer oq_YOUR_PRIVATE_KEY
+const APPEND_REQUEST = `POST https://YOUR-ONENOTE-SYSTEM-DOMAIN/api/append
+Authorization: Bearer ons_YOUR_PRIVATE_KEY
 Content-Type: application/json
 
 {
@@ -28,7 +28,7 @@ export default function ShortcutsPage() {
     <section className="doc-hero">
       <p className="eyebrow">Apple Shortcuts</p>
       <h1>Capture to OneNote from iPhone, iPad, or Mac</h1>
-      <p className="lead">A Shortcut is the small automation that collects text on your device and sends it to your private OneNote Queue address. Your API key stays inside the Shortcut; your Microsoft password does not.</p>
+      <p className="lead">A Shortcut is the small automation that collects text on your device and sends it to your private OneNote System address. Your API key stays inside the Shortcut; your Microsoft password does not.</p>
     </section>
 
     <nav className="toc" aria-label="On this page">
@@ -56,8 +56,8 @@ export default function ShortcutsPage() {
         <h2>Before you install or build a Shortcut</h2>
         <ol className="steps compact-steps">
           <li><h3>Finish Steps 1–4 of setup</h3><p>Your database must be connected, Microsoft must be connected, and a default OneNote section must be selected.</p></li>
-          <li><h3>Create your Shortcut API key in Step 5</h3><p>The key begins with <code>oq_</code> and is displayed only once. Save it in your password manager before leaving the page.</p></li>
-          <li><h3>Know your deployment address</h3><p>This is the public address of <em>your copy</em> of OneNote Queue, such as <code>https://my-onenote-queue.vercel.app</code>. It is not <code>onenotequeue.erinskidds.com</code> unless that is the installation you control.</p></li>
+          <li><h3>Create your Shortcut API key in Step 5</h3><p>The key begins with <code>ons_</code> and is displayed only once. Save it in your password manager before leaving the page.</p></li>
+          <li><h3>Know your deployment address</h3><p>This is the public address of <em>your copy</em> of OneNote System, such as <code>https://my-onenote-system.vercel.app</code>. It is not <code>onenotesystem.erinskidds.com</code> unless that is the installation you control.</p></li>
           <li><h3>Open Apple&apos;s Shortcuts app</h3><p>Shortcuts is included on current iPhone, iPad, and Mac systems. Apple&apos;s <a href="https://support.apple.com/guide/shortcuts/welcome/ios" target="_blank" rel="noreferrer">Shortcuts User Guide ↗</a> explains the editor and running shortcuts.</p></li>
         </ol>
       </section>
@@ -66,8 +66,8 @@ export default function ShortcutsPage() {
         <h2>How to configure a downloaded Shortcut</h2>
         <p>When the iCloud links are published, opening one will show Apple&apos;s preview before anything is added. Review its actions, choose <strong>Add Shortcut</strong>, then answer its setup questions:</p>
         <div className="table-wrap"><table><thead><tr><th>Question</th><th>What to enter</th><th>Example</th></tr></thead><tbody>
-          <tr><td>OneNote Queue URL</td><td>Your deployment address, with <strong>no slash at the end</strong></td><td><code>https://my-queue.vercel.app</code></td></tr>
-          <tr><td>API key</td><td>The complete key created in Setup Step 5</td><td><code>oq_…</code></td></tr>
+          <tr><td>OneNote System URL</td><td>Your deployment address, with <strong>no slash at the end</strong></td><td><code>https://my-queue.vercel.app</code></td></tr>
+          <tr><td>API key</td><td>The complete key created in Setup Step 5</td><td><code>ons_…</code></td></tr>
           <tr><td>Default page title</td><td>Optional title to use when the Shortcut does not ask</td><td><code>Quick Inbox</code></td></tr>
         </tbody></table></div>
         <div className="callout warning"><p><strong>Treat the API key like a password.</strong> Do not put it in the URL, a screenshot, a shared Shortcut, GitHub, or a support message. If you share your customized Shortcut, remove the key first.</p></div>
@@ -110,7 +110,7 @@ export default function ShortcutsPage() {
       <section id="troubleshooting">
         <h2>Shortcut troubleshooting</h2>
         <div className="grid two">
-          <article><h3>“Unauthorized” or status 401</h3><p>Check that the header is named <code>Authorization</code>, its value starts with <code>Bearer </code>, and the entire <code>oq_</code> key follows it. Create a new key if the original was lost.</p></article>
+          <article><h3>“Unauthorized” or status 401</h3><p>Check that the header is named <code>Authorization</code>, its value starts with <code>Bearer </code>, and the entire <code>ons_</code> key follows it. Create a new key if the original was lost.</p></article>
           <article><h3>“No default OneNote section” or status 409</h3><p>Return to Setup Step 4, load your notebooks, and select the section where new pages should go.</p></article>
           <article><h3>The request cannot connect</h3><p>Open your deployment URL in Safari. If the site does not load, fix the Vercel deployment or self-hosted server before changing the Shortcut.</p></article>
           <article><h3>The page contains the wrong text</h3><p>Open the JSON body and make sure <code>title</code> uses the first input and <code>content</code> uses the second. Shortcut variables can be reassigned accidentally while editing.</p></article>
