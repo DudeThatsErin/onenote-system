@@ -55,6 +55,16 @@ dmesg | tail -20 | onenotesystem append --stdin --page-title "Server log"
 onenotesystem configure --default-page "Quick Inbox"
 onenotesystem append "A thought"`;
 
+const TODO = `# Add a task to your default To Do list
+onenotesystem todo add "Renew the domain" --due +7d
+
+# A specific list, with a note and a reminder
+onenotesystem todo add "Call the bank" --list Errands --due tomorrow --note "Ask about the fee"
+
+# See what is open, then close one out
+onenotesystem todo list
+onenotesystem todo done AAMkAG...`;
+
 const SCRIPTING = `#!/usr/bin/env bash
 # Log a failed nightly build to OneNote without opening a browser.
 if ! make nightly > build.log 2>&1; then
@@ -76,9 +86,9 @@ export default function TerminalPage() {
       <p className="eyebrow">Command line</p>
       <h1>Use OneNote from a terminal</h1>
       <p className="lead">
-        <code>onenotesystem</code> is the official command-line client. It sends the same two requests the Apple
+        <code>onenotesystem</code> is the official command-line client. It sends the same requests the Apple
         Shortcuts send, to the same deployment, so a page created from a Linux server and a page created from your
-        iPhone are identical. It is built for the machines OneNote will not run on.
+        iPhone are identical. It also drives Microsoft To Do. It is built for the machines OneNote will not run on.
       </p>
     </section>
 
@@ -88,6 +98,7 @@ export default function TerminalPage() {
       <a href="#configure">Configure</a>
       <a href="#capture">Create a page</a>
       <a href="#append">Append to a page</a>
+      <a href="#todo">Microsoft To Do</a>
       <a href="#scripting">Scripting</a>
       <a href="#security">Security</a>
       <a href="#troubleshooting">Troubleshooting</a>
@@ -161,6 +172,22 @@ export default function TerminalPage() {
         <p><code>append</code> adds text to a page that already exists — a running inbox, a daily log, a project page. It calls <code>POST /api/append</code>.</p>
         <pre><code>{APPEND}</code></pre>
         <p><code>--page-title</code> must match a page title exactly, and that page must be in your configured default section. If two pages share the title the command stops and asks for <code>--page-id</code>, because quietly appending to the wrong one would be worse than failing. A page ID can reach any section the connected Microsoft account can see.</p>
+      </section>
+
+      <section id="todo">
+        <h2>Microsoft To Do</h2>
+        <p><code>todo</code> creates and completes Microsoft To Do tasks through the same deployment and the same API key. Calls <code>/api/todo</code>.</p>
+        <pre><code>{TODO}</code></pre>
+        <div className="table-wrap"><table><thead><tr><th>Flag</th><th>Meaning</th></tr></thead><tbody>
+          <tr><td><code>--list &lt;name&gt;</code></td><td>Which To Do list to use; defaults to your default list</td></tr>
+          <tr><td><code>--due &lt;when&gt;</code></td><td><code>2026-09-15</code>, <code>today</code>, <code>tomorrow</code>, <code>+3d</code>, <code>+2w</code>, or <code>2026-09-15T14:30</code></td></tr>
+          <tr><td><code>--reminder &lt;when&gt;</code></td><td>Same formats; also switches the reminder on</td></tr>
+          <tr><td><code>--note &lt;text&gt;</code></td><td>A longer note on the task</td></tr>
+          <tr><td><code>--all</code></td><td>On <code>todo list</code>, include completed tasks</td></tr>
+          <tr><td><code>--top &lt;n&gt;</code></td><td>On <code>todo list</code>, how many to show (default 25, max 100)</td></tr>
+        </tbody></table></div>
+        <p>Dates are sent with your computer&apos;s time zone, so a bare date stays the day you meant rather than shifting for anyone west of UTC. <code>todo list</code> prints each task&apos;s ID underneath it, which is what <code>todo done</code> takes.</p>
+        <div className="callout"><p>To Do needs the <code>Tasks.ReadWrite</code> permission on your Microsoft app registration. If you added it after connecting, reconnect Microsoft in <Link href="/setup">setup</Link> — a permission added later does not upgrade a connection that was already approved. OneNote keeps working throughout, and the client tells you plainly when this is the problem.</p></div>
       </section>
 
       <section id="scripting">

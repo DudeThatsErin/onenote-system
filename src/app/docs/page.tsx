@@ -132,7 +132,7 @@ export default function DocsPage() {
           <li><h3>Add the Web redirect URI</h3><p>For platform, choose <strong>Web</strong>. Enter <code>https://YOUR-VERCEL-DOMAIN/api/auth/microsoft/callback</code>. Replace only <code>YOUR-VERCEL-DOMAIN</code>. Example: <code>https://my-queue.vercel.app/api/auth/microsoft/callback</code>.</p></li>
           <li><h3>Copy the Application (client) ID</h3><p>After registration, the Overview screen shows an <strong>Application (client) ID</strong>. Copy the long identifier. Do not copy the Object ID or Directory ID.</p></li>
           <li><h3>Create a client secret</h3><p>Open <strong>Certificates &amp; secrets → Client secrets → New client secret</strong>. Name it <code>OneNote System</code>, choose an expiration, and create it. Copy the secret&apos;s <strong>Value</strong> immediately. Do not copy the Secret ID. Microsoft will never display the Value again.</p></li>
-          <li><h3>Add Microsoft Graph permissions</h3><p>Open <strong>API permissions → Add a permission → Microsoft Graph → Delegated permissions</strong>. Add <code>User.Read</code> and <code>Notes.ReadWrite</code>. <code>offline_access</code> is requested during Microsoft sign-in so the connection can refresh without asking you every hour.</p></li>
+          <li><h3>Add Microsoft Graph permissions</h3><p>Open <strong>API permissions → Add a permission → Microsoft Graph → Delegated permissions</strong>. Add <code>User.Read</code>, <code>Notes.ReadWrite</code>, and <code>Tasks.ReadWrite</code>. <code>offline_access</code> is requested during Microsoft sign-in so the connection can refresh without asking you every hour.</p><p><code>Tasks.ReadWrite</code> is what powers Microsoft To Do. Leave it out if you only want OneNote pages — everything else still works. If you add it to an existing deployment, reconnect Microsoft afterwards: a permission added later does not upgrade a connection that was already approved.</p></li>
         </ol>
         <p>Microsoft&apos;s Graph documentation confirms that creating OneNote pages uses delegated OneNote permissions and that page content is sent as HTML. See <a href="https://learn.microsoft.com/en-us/graph/api/onenote-post-pages?view=graph-rest-1.0" target="_blank" rel="noreferrer">Create OneNote pages ↗</a>.</p>
       </section>
@@ -211,6 +211,16 @@ onenotesystem capture &quot;Standup notes&quot; --content &quot;Shipped the CLI&
       </section>
 
       <section id="security">
+        <h3 id="todo-api">Microsoft To Do</h3>
+        <p>Available when the connection has approved <code>Tasks.ReadWrite</code>. All four use the same <code>ons_</code> API key as the OneNote endpoints.</p>
+        <div className="table-wrap"><table><thead><tr><th>Request</th><th>Does</th></tr></thead><tbody>
+          <tr><td><code>GET /api/todo/lists</code></td><td>Your To Do lists, default first</td></tr>
+          <tr><td><code>GET /api/todo</code></td><td>Open tasks. <code>?list=</code>, <code>?all=true</code>, <code>?top=</code></td></tr>
+          <tr><td><code>POST /api/todo</code></td><td>Create a task from <code>title</code>, and optional <code>note</code>, <code>list</code>, <code>dueDate</code>, <code>reminder</code>, <code>timeZone</code></td></tr>
+          <tr><td><code>POST /api/todo/complete</code></td><td>Mark a task done by <code>id</code></td></tr>
+        </tbody></table></div>
+        <p>Send <code>timeZone</code> as an IANA name such as <code>America/Chicago</code>. A bare <code>dueDate</code> of <code>2026-09-15</code> is anchored to midnight in that zone, so the task stays on the day you meant rather than shifting for anyone west of UTC.</p>
+
         <h2>Security and data storage</h2>
         <div className="table-wrap"><table><thead><tr><th>Information</th><th>Where it is stored</th><th>Protection</th></tr></thead><tbody>
           <tr><td>Setup step number</td><td>Your browser&apos;s <code>localStorage</code></td><td>Not sensitive; used only to reopen the last viewed step</td></tr>
@@ -277,6 +287,7 @@ docker compose logs --tail=100 app`}</code></pre>
         <div className="troubleshooting">
           <details><summary>Setup says DATABASE_URL is not configured</summary><p>The Neon integration was not connected to this Vercel project, or the app was not redeployed after it was connected. Check <strong>Vercel → Project → Settings → Environment Variables</strong> for <code>DATABASE_URL</code>, then redeploy.</p></details>
           <details><summary>Microsoft says the redirect URI does not match</summary><p>Compare the URI in Entra with <code>APP_URL</code> plus <code>/api/auth/microsoft/callback</code>. They must match exactly, including <code>https</code>, subdomain, path, and absence of a trailing slash.</p></details>
+          <details><summary>To Do commands say access has not been approved</summary><p>The connection was approved before <code>Tasks.ReadWrite</code> was added. Add that delegated permission in your Microsoft app registration, then reconnect Microsoft in setup. OneNote keeps working the whole time.</p></details>
           <details><summary>Microsoft sign-in works but notebooks do not load</summary><p>Confirm that the app registration has delegated <code>Notes.ReadWrite</code> permission and that you approved it. Reconnect the Microsoft account after changing permissions.</p></details>
           <details><summary>APP_ENCRYPTION_KEY is not configured</summary><p>Add a strong random value in Vercel Environment Variables and redeploy. Do not change an existing key after credentials are stored; old encrypted values cannot be decrypted with a new key.</p></details>
           <details><summary>The Shortcut receives Unauthorized</summary><p>Confirm the header is exactly <code>Authorization: Bearer ons_…</code>. There must be one space after <code>Bearer</code>. The key must come from the same deployment receiving the request.</p></details>

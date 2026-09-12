@@ -12,6 +12,7 @@ The public guide is available at [onenotesystem.erinskidds.com](https://onenotes
 - Hashed per-user capture API keys
 - `POST /api/capture` for a title, plain-text body, and optional source URL
 - `POST /api/append` for adding plain text and an optional source URL to an existing page
+- Microsoft To Do: list, create, and complete tasks with the same API key
 - Signed Discord HTTP interactions with PING validation and Ed25519 verification
 - Idempotent registration and removal of the `/onenote create` and `/onenote append` actions
 - An official terminal client on npm for Linux, servers, and locked-down work machines
@@ -107,6 +108,34 @@ Content-Type: application/json
 ```
 
 Use either `pageTitle` to find an exact title in the configured default section or `pageId` to identify a page directly. A successful request returns `200 OK` after Microsoft Graph appends the content.
+
+## Microsoft To Do
+
+Available when the Microsoft app registration has the `Tasks.ReadWrite` delegated permission and the connection was approved after it was added.
+
+| Request | Does |
+| --- | --- |
+| `GET /api/todo/lists` | To Do lists on the account, default first |
+| `GET /api/todo` | Open tasks. `?list=`, `?all=true`, `?top=` |
+| `POST /api/todo` | Create from `title`, plus optional `note`, `list`, `dueDate`, `reminder`, `timeZone` |
+| `POST /api/todo/complete` | Mark a task done by `id` |
+
+```http
+POST /api/todo
+Authorization: Bearer ons_YOUR_PRIVATE_KEY
+Content-Type: application/json
+
+{
+  "title": "Renew the domain",
+  "dueDate": "2026-09-15",
+  "timeZone": "America/Chicago",
+  "list": "Errands"
+}
+```
+
+Send `timeZone` as an IANA name. A bare `dueDate` is anchored to midnight in that zone, so the task stays on the day you meant instead of shifting for anyone west of UTC.
+
+Adding the permission does not upgrade a connection that was already approved — reconnect Microsoft afterwards. Until then these endpoints answer `403` with an explanation, and OneNote keeps working.
 
 ## Discord
 

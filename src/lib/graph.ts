@@ -2,7 +2,17 @@ import { decrypt, encrypt } from '@/lib/crypto';
 import { db } from '@/lib/db';
 
 const TOKEN_URL = 'https://login.microsoftonline.com/common/oauth2/v2.0/token';
-const SCOPES = 'offline_access User.Read Notes.ReadWrite';
+// Tasks.ReadWrite backs Microsoft To Do. Adding a scope does not upgrade a
+// token that was already issued -- reconnect Microsoft to pick it up.
+const SCOPES = 'offline_access User.Read Notes.ReadWrite Tasks.ReadWrite';
+
+/** Carries Graph's status so callers can tell a missing scope from a real failure. */
+export class GraphError extends Error {
+  constructor(message: string, public status: number) {
+    super(message);
+    this.name = 'GraphError';
+  }
+}
 
 async function config() {
   const rows = await db()`SELECT client_id, client_secret_enc FROM ons_config WHERE id = 1`;
@@ -42,6 +52,6 @@ export async function accessToken(userId: string) {
 export async function graph(userId: string, path: string, init: RequestInit = {}) {
   const token = await accessToken(userId);
   const res = await fetch(`https://graph.microsoft.com/v1.0${path}`, { ...init, headers: { authorization: `Bearer ${token}`, ...init.headers } });
-  if (!res.ok) { const data = await res.json().catch(() => ({})); throw new Error(data.error?.message || `Microsoft Graph returned ${res.status}`); }
+  if (!res.ok) { const data = await res.json().catch(() => ({})); throw new GraphError(data.error?.message || `Microsoft Graph returned ${res.status}`, res.status); }
   return res;
 }
