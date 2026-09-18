@@ -46,7 +46,7 @@ export default function Home() {
       <div className="grid three">
         <article><h3>Share Sheet captures</h3><p>Send selected text, a link, or content from another app through the iPhone, iPad, or Mac Share Sheet.</p></article>
         <article><h3>Quick inbox notes</h3><p>Run a Shortcut, type a thought, and drop it into the same OneNote inbox without opening OneNote first.</p></article>
-        <article><h3>Terminal captures</h3><p>Install one npm package and pipe a log, a diff, or a thought straight into OneNote — from Linux, a server over SSH, or a work machine that cannot install OneNote.</p></article>
+        <article><h3>Terminal captures</h3><p>Install one .NET tool and pipe a log, a diff, or a thought straight into OneNote — from Linux, a server over SSH, or a work machine that cannot install OneNote.</p></article>
         <article><h3>Discord and other automations</h3><p>Use the signed Discord command integration or call the documented HTTPS endpoints from automation tools, scripts, and webhooks.</p></article>
       </div>
       <p><Link className="text-link" href="/shortcuts">See the Shortcut choices and exact setup instructions →</Link></p>

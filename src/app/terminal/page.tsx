@@ -6,10 +6,15 @@ import SiteHeader from '@/components/SiteHeader';
 export const metadata: Metadata = {
   title: 'Terminal',
   description:
-    'Install the onenotesystem command from npm and create or update OneNote pages from any shell, including Linux and work machines where OneNote cannot be installed.',
+    'Install the onenotesystem command as a .NET tool and create or update OneNote pages from any shell, including Linux and work machines where OneNote cannot be installed.',
 };
 
-const INSTALL = `npm install -g onenotesystem`;
+const INSTALL = `dotnet tool install --global OneNoteSystem.Cli`;
+
+const INSTALL_SOURCE = `git clone https://github.com/DudeThatsErin/onenote-terminal
+cd onenote-terminal
+dotnet pack -c Release
+dotnet tool install --global --add-source src/OneNoteSystem.Cli/bin/Release OneNoteSystem.Cli`;
 
 const HELP = `onenotesystem --help              # commands, configuration, exit codes
 onenotesystem capture --help      # every flag capture accepts, with examples
@@ -111,16 +116,20 @@ export default function TerminalPage() {
         <div className="grid two">
           <article><h3>Linux desktops</h3><p>The one supported way to put a page in your own OneNote notebook from Ubuntu, Fedora, Arch, or anything else, without a browser.</p></article>
           <article><h3>Servers over SSH</h3><p>Pipe a log, a diff, or a failing test into a OneNote page from a machine that has no graphical session at all.</p></article>
-          <article><h3>Locked-down work machines</h3><p>If you can install a Node package, you can capture notes. There is nothing to install with administrator rights and no browser extension.</p></article>
+          <article><h3>Locked-down work machines</h3><p>If you can install a .NET tool, you can capture notes. <code>--global</code> installs under your own home directory, so there is nothing to install with administrator rights and no browser extension.</p></article>
           <article><h3>Scripts and cron</h3><p>Stable exit codes and <code>--json</code> output make it safe to call from automation that has to react when something fails.</p></article>
         </div>
       </section>
 
       <section id="install">
         <h2>Install</h2>
-        <p>The client is published to npm as <a href="https://www.npmjs.com/package/onenotesystem" target="_blank" rel="noreferrer">onenotesystem ↗</a>, and its source is at <a href="https://github.com/DudeThatsErin/onenote-terminal" target="_blank" rel="noreferrer">onenote-terminal ↗</a>. It needs Node.js 18.17 or newer and has no other dependencies.</p>
+        <p>The client is a .NET tool published as <code>OneNoteSystem.Cli</code>, and its source is at <a href="https://github.com/DudeThatsErin/onenote-terminal" target="_blank" rel="noreferrer">onenote-terminal ↗</a>. It needs the <a href="https://dotnet.microsoft.com/download/dotnet/8.0" target="_blank" rel="noreferrer">.NET 8 SDK ↗</a> and has no other dependencies.</p>
         <pre><code>{INSTALL}</code></pre>
-        <p>That installs two commands: <code>onenotesystem</code> and the shorter alias <code>ons</code>. To try it without installing anything, run <code>npx onenotesystem --help</code>.</p>
+        <p>That installs one command, <code>onenotesystem</code>. Update it later with <code>dotnet tool update --global OneNoteSystem.Cli</code>, or remove it with <code>dotnet tool uninstall --global OneNoteSystem.Cli</code>.</p>
+
+        <h3>Installing from source</h3>
+        <p>To build the current <code>main</code> yourself, pack it and install from the local output:</p>
+        <pre><code>{INSTALL_SOURCE}</code></pre>
 
         <h3>Getting help</h3>
         <p>Every command documents itself, so you should rarely need this page once it is installed. <code>--help</code> and <code>-h</code> work at the top level and on each command, and <code>help &lt;command&gt;</code> does the same thing.</p>
@@ -144,7 +153,6 @@ export default function TerminalPage() {
           <tr><td><code>ONENOTE_API_KEY</code></td><td>An API key from Setup Step 5</td></tr>
           <tr><td><code>ONENOTE_DEFAULT_PAGE</code></td><td>Page title <code>append</code> uses when you do not name one</td></tr>
           <tr><td><code>ONENOTE_TIMEOUT_MS</code></td><td>Request timeout, default <code>15000</code></td></tr>
-          <tr><td><code>ONENOTE_CONFIG_DIR</code></td><td>Override where the config file lives</td></tr>
         </tbody></table></div>
 
         <h3>Check that it works</h3>
@@ -212,7 +220,7 @@ export default function TerminalPage() {
         <h2>Security</h2>
         <p>Your API key is sent only to the deployment address you configured, as an <code>Authorization: Bearer</code> header. It is never printed, logged, or included in an error message — including the unauthorized one. The config file is written with owner-only permissions.</p>
         <p>Deployment addresses must use HTTPS. Plain <code>http://</code> is accepted only for <code>localhost</code> and <code>127.0.0.1</code>, so a typo cannot quietly send your key over an unencrypted connection.</p>
-        <p>Your note content passes through your own deployment to Microsoft Graph and nowhere else. The client has no telemetry and no runtime dependencies.</p>
+        <p>Your note content passes through your own deployment to Microsoft Graph and nowhere else. The client has no telemetry and no package dependencies beyond the .NET base libraries.</p>
         <div className="callout warning"><p><strong>On a shared machine, prefer an environment variable to the config file,</strong> and create a key you can revoke for that machine alone. Anyone who can read the file can write to your OneNote section.</p></div>
       </section>
 
@@ -224,7 +232,7 @@ export default function TerminalPage() {
           <article><h3>Exit code 7, &ldquo;no default OneNote section&rdquo;</h3><p>Return to Setup Step 4, load your notebooks, and choose the section that should receive new pages.</p></article>
           <article><h3>Exit code 3, &ldquo;no page titled …&rdquo;</h3><p>Titles must match exactly, including capitalisation, and the page must be in your default section. Use <code>--page-id</code> to reach a page in another section.</p></article>
           <article><h3>Exit code 4, &ldquo;could not reach&rdquo;</h3><p>Run <code>onenotesystem doctor</code>. If it also fails, open your deployment address in a browser before changing anything about the client.</p></article>
-          <article><h3><code>command not found</code> after install</h3><p>npm&apos;s global bin directory is not on your <code>PATH</code>. Run <code>npm config get prefix</code> and add that directory&apos;s <code>bin</code> to your shell profile.</p></article>
+          <article><h3><code>command not found</code> after install</h3><p>The .NET global tools directory is not on your <code>PATH</code>. Add <code>~/.dotnet/tools</code> to your shell profile on Linux or macOS, or <code>%USERPROFILE%\\.dotnet\\tools</code> on Windows, then open a new shell.</p></article>
         </div>
         <p>For deployment and Microsoft errors, continue with the <Link href="/docs#troubleshooting">full troubleshooting guide →</Link></p>
       </section>

@@ -15,22 +15,22 @@ The public guide is available at [onenotesystem.erinskidds.com](https://onenotes
 - Microsoft To Do: list, create, and complete tasks with the same API key
 - Signed Discord HTTP interactions with PING validation and Ed25519 verification
 - Idempotent registration and removal of the `/onenote create` and `/onenote append` actions
-- An official terminal client on npm for Linux, servers, and locked-down work machines
+- An official .NET terminal client for Linux, servers, and locked-down work machines
 - Vercel deployment and Docker Compose self-hosting
 
 ## Terminal client
 
-[`onenotesystem`](https://www.npmjs.com/package/onenotesystem) is the command-line client for a deployment. It calls the same `/api/capture` and `/api/append` endpoints the Apple Shortcuts use, so pages created from a shell and pages created from a phone are identical.
+[`onenotesystem`](https://github.com/DudeThatsErin/onenote-terminal) is the .NET command-line client for a deployment. It calls the same `/api/capture` and `/api/append` endpoints the Apple Shortcuts use, so pages created from a shell and pages created from a phone are identical.
 
 ```bash
-npm install -g onenotesystem
+dotnet tool install --global OneNoteSystem.Cli
 onenotesystem configure
 onenotesystem capture "Standup notes" --content "Shipped the CLI"
 git log -1 --stat | onenotesystem capture "Today's commit" --stdin
 onenotesystem append "Ask about the Q3 budget" --page-title "Quick Inbox"
 ```
 
-It needs Node.js 18.17 or newer, has no runtime dependencies, and stores your API key in an owner-only config file. Source: [onenote-terminal](https://github.com/DudeThatsErin/onenote-terminal). Full guide: [/terminal](https://onenotesystem.erinskidds.com/terminal).
+It needs the .NET 8 SDK, has no package dependencies beyond the .NET base libraries, and stores your API key in an owner-only config file. Source: [onenote-terminal](https://github.com/DudeThatsErin/onenote-terminal). Full guide: [/terminal](https://onenotesystem.erinskidds.com/terminal).
 
 ## Upgrading from OneNote Queue
 

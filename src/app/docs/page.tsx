@@ -158,10 +158,10 @@ export default function DocsPage() {
       <section id="terminal">
         <h2>Part 7: use OneNote from a terminal</h2>
         <p>The <code>onenotesystem</code> command is the official command-line client. It takes the same two values a Shortcut does — your deployment URL and an <code>ons_</code> API key — and calls the same two endpoints, so pages created from a shell and pages created from a phone are identical.</p>
-        <pre><code>npm install -g onenotesystem
+        <pre><code>dotnet tool install --global OneNoteSystem.Cli
 onenotesystem configure
 onenotesystem capture &quot;Standup notes&quot; --content &quot;Shipped the CLI&quot;</code></pre>
-        <p>It exists for the machines OneNote will not run on: Linux desktops, servers you only reach over SSH, and work computers where the OneNote app cannot be installed. It needs Node.js 18.17 or newer and has no other dependencies.</p>
+        <p>It exists for the machines OneNote will not run on: Linux desktops, servers you only reach over SSH, and work computers where the OneNote app cannot be installed. It needs the .NET 8 SDK and has no other dependencies.</p>
         <p><Link className="button" href="/terminal">Open the complete terminal guide →</Link></p>
       </section>
 
