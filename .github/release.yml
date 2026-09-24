@@ -1,0 +1,12 @@
+changelog:
+  categories:
+    - title: 🚀 New features
+      labels: [feature, enhancement]
+    - title: 🐛 Fixes
+      labels: [bug, fix]
+    - title: 🛠️ Maintenance
+      labels: [maintenance, dependencies]
+  exclude:
+    labels: [skip-changelog]
+  change-template: "- $TITLE by @$AUTHOR in #$NUMBER"
+  change-title-escapes: "<*_&"
